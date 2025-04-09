@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Low-Level y Linux</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>🧠 Programación Low-Level y Linux</h1>
+    <p>Mis aventuras en el mundo del bajo nivel y sistemas operativos minimalistas</p>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="#sobre-mi">Sobre mí</a></li>
+      <li><a href="#historia">Mi historia</a></li>
+      <li><a href="#herramientas">Herramientas</a></li>
+      <li><a href="#comparacion">Comparación</a></li>
+      <li><a href="#multimedia">Multimedia</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+  <section id="sobre-mi">
+    <article>
+      <h2>Sobre mí</h2>
+      <p>Soy un entusiasta del software libre, los sistemas operativos Unix-like, y la programación de bajo nivel. Me gusta aprender cómo funcionan las cosas desde su codigo fuente, el desarrollo de hardware architectures,y configurar sistemas ligeros y minimalistas con distros como <strong>Void Linux</strong> y <strong>OpenBSD</strong>.</p>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux Tux" width="150" />
+    </article>
+  </section>
+
+  <section id="historia">
+    <article>
+      <h2>Mi historia con Linux</h2>
+      <p>
+        Al igual que muchos otros, Windows fue mi zona de comfort durante años. Se sentía estable, eficiente y bien incorporado... hasta que no.
+        Tras meses de consumo excesivo de RAM, las constantes actualizaciones forzadas y problemas de compatibilidad, me vi forzado a explorar nuevos sistemas operativos que cumplieran con lo que yo quería.
+      </p>
+      <p>
+        Así llegué a Fedora, que usé durante un corto periodo de tiempo. Ese fue el punto de no retorno: me abrió la puerta al mundo del software libre, del control total sobre mi sistema, y del amor por las distros minimalistas y los entornos personalizados. Desde entonces no ha habido vuelta atrás.
+      </p>
+    </article>
+  </section>
+
+  <section id="herramientas">
+    <article>
+      <h2>Herramientas y tecnologías favoritas</h2>
+      <ul>
+        <li>🖥️ Lenguajes: C, Rust, Assembly</li>
+        <li>🐧 Distros: Void/Arch Linux, Gentoo, OpenBSD</li>
+        <li>🩰 Init: runit, OpenRC, sin systemd</li>
+        <li>🪟 Window managers: dwm, Hyprland</li>
+        <li>🧠 Debugging: GDB, strace, objdump</li>
+        <li>⚙️ Kernels personalizados y minimalismo</li>
+      </ul>
+      <button onclick="alert('¡Vamos a programar en C!')">Inicia tu viaje con C</button>
+    </article>
+  </section>
+
+  <section id="comparacion">
+    <article>
+      <h2>Comparación de sistemas</h2>
+      <table>
+        <tr>
+          <th>Sistema</th>
+          <th>Init</th>
+          <th>Facilidad</th>
+          <th>Uso</th>
+        </tr>
+        <tr>
+          <td>Void Linux</td>
+          <td>runit</td>
+          <td>Media</td>
+          <td>Diario</td>
+        </tr>
+        <tr>
+          <td>Gentoo</td>
+          <td>OpenRC</td>
+          <td>Baja</td>
+          <td>Experimental</td>
+        </tr>
+        <tr>
+          <td>OpenBSD</td>
+          <td>rc.d</td>
+          <td>Media</td>
+          <td>Seguridad / Aprendizaje</td>
+        </tr>
+      </table>
+    </article>
+  </section>
+
+  <section id="multimedia">
+    <article>
+      <h2>Multimedia recomendada</h2>
+      <p>Este video explica la evolución de Unix desde sus inicios:</p>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/tc4ROCJYbm0" title="The Evolution of Unix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <p>Explora más sobre sistemas Unix-like:</p>
+      <iframe width="400" height="250" src="https://en.wikipedia.org/wiki/Unix-like" title="Unix-like Wikipedia"></iframe>
+    </article>
+  </section>
+
+  <section id="contacto">
+    <article>
+      <h2>Contacto</h2>
+      <p>¿Tienes preguntas sobre Linux, programación de bajo nivel o quieres compartir algún proyecto? ¡Escríbeme!</p>
+      
+      <form id="formulario-contacto">
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Correo electrónico:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="asunto">Asunto:</label>
+          <select id="asunto" name="asunto">
+            <option value="consulta">Consulta técnica</option>
+            <option value="colaboracion">Propuesta de colaboración</option>
+            <option value="otro">Otro tema</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="mensaje">Mensaje:</label>
+          <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <input type="checkbox" id="newsletter" name="newsletter">
+          <label for="newsletter">Quiero recibir actualizaciones sobre Linux y programación de bajo nivel</label>
+        </div>
+        
+        <button type="submit">Enviar mensaje</button>
+      </form>
+    </article>
+  </section>
+  <footer>
+    <p>Desarrollado con ❤️ por un apasionado de las interacciones sotfware/hardware</p>
+  </footer>
+</body>
+</html>
+
