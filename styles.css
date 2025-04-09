@@ -29,24 +29,13 @@ nav a {
   color: #00ffcc;
   text-decoration: none;
   font-weight: bold;
-  transition: color 0.3s ease;
 }
 nav a:hover {
   text-decoration: underline;
 }
 h2 {
   color: #00ffcc;
-  border-left: 4px solid #00ffcc;
-  padding-left: 12px;
-  margin-top: 30px;
 }
-
-section {
-  border-top: 1px solid #333;
-  margin-top: 40px;
-  padding-top: 20px;
-}
-
 /* Tabla */
 table {
   width: 100%;
@@ -61,7 +50,6 @@ th, td {
 th {
   background-color: #222;
 }
-
 /* Botón */
 button {
   background-color: #00ffcc;
@@ -76,7 +64,6 @@ button {
 button:hover {
   background-color: #00ccaa;
 }
-
 /* Multimedia */
 video, iframe {
   margin-top: 15px;
@@ -95,6 +82,7 @@ video, iframe {
   border-radius: 12px;
   box-shadow: 0 0 10px #00ffcc;
 }
+
 .video-container iframe {
   position: absolute;
   top: 0;
@@ -196,56 +184,4 @@ textarea:valid {
 input:invalid,
 textarea:invalid {
   border-left: 3px solid #ff3366;
-}
-
-/* Estilo animado para la sección de historia */
-#historia {
-  background-color: #2b2b2b;
-  border-left: 4px solid #00ffcc;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
-  animation: fadeInUp 1s ease-in-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Recursos recomendados */
-#recursos ul li {
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
-#recursos a {
-  color: #00ffcc;
-  font-weight: bold;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-#recursos a:hover {
-  text-decoration: underline;
-}
-
-/* Código embebido */
-code, pre {
-  background-color: #1a1a1a;
-  color: #00ffcc;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.95em;
-}
-pre {
-  overflow-x: auto;
-  margin: 15px 0;
 }
