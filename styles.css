@@ -29,12 +29,22 @@ nav a {
   color: #00ffcc;
   text-decoration: none;
   font-weight: bold;
+  transition: color 0.3s ease;
 }
 nav a:hover {
   text-decoration: underline;
 }
 h2 {
   color: #00ffcc;
+  border-left: 4px solid #00ffcc;
+  padding-left: 12px;
+  margin-top: 30px;
+}
+
+section {
+  border-top: 1px solid #333;
+  margin-top: 40px;
+  padding-top: 20px;
 }
 
 /* Tabla */
@@ -209,3 +219,33 @@ textarea:invalid {
   }
 }
 
+/* Recursos recomendados */
+#recursos ul li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+#recursos a {
+  color: #00ffcc;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+#recursos a:hover {
+  text-decoration: underline;
+}
+
+/* Código embebido */
+code, pre {
+  background-color: #1a1a1a;
+  color: #00ffcc;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.95em;
+}
+pre {
+  overflow-x: auto;
+  margin: 15px 0;
+}
