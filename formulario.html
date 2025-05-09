@@ -31,28 +31,40 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Lenguaje de programación favorito</label><br>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="lenguaje" id="c" value="C" required>
-          <label class="form-check-label" for="c">C</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="lenguaje" id="rust" value="Rust">
-          <label class="form-check-label" for="rust">Rust</label>
-        </div>
-        <div class="invalid-feedback d-block">Selecciona al menos uno.</div>
-      </div>
+  <label class="form-label">Lenguaje de programación favorito</label><br>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="lenguaje" id="c" value="C" required>
+    <label class="form-check-label" for="c">C</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="lenguaje" id="cpp" value="C++">
+    <label class="form-check-label" for="cpp">C++</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="lenguaje" id="python" value="Python">
+    <label class="form-check-label" for="python">Python</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="lenguaje" id="rust" value="Rust">
+    <label class="form-check-label" for="rust">Rust</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="lenguaje" id="swift" value="Swift">
+    <label class="form-check-label" for="swift">Swift</label>
+  </div>
+  <div class="invalid-feedback d-block">Selecciona al menos uno.</div>
+</div>
 
       <div class="mb-3">
-        <label for="intereses" class="form-label">Intereses</label>
-        <select class="form-select" id="intereses" required>
-          <option value="">Selecciona una opción</option>
-          <option value="linux">Linux</option>
-          <option value="hardware">Hardware Libre</option>
-          <option value="programacion">Programación de sistemas</option>
-        </select>
-        <div class="invalid-feedback">Selecciona un tema de interés.</div>
-      </div>
+  <label for="intereses" class="form-label">Intereses</label>
+  <select class="form-select" id="intereses" multiple required size="4">
+    <option value="linux">Linux</option>
+    <option value="software">Software Libre</option>
+    <option value="programacion">Programación de sistemas</option>
+    <option value="arquitecturas">Arquitecturas de procesadores</option>
+  </select>
+  <div class="invalid-feedback">Selecciona al menos un tema de interés.</div>
+</div>
 
       <div class="mb-3 form-check">
         <input type="checkbox" class="form-check-input" id="check" required>
