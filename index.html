@@ -133,7 +133,7 @@
       <li><a href="https://wiki.archlinux.org/" target="_blank">📘 Arch Wiki</a> – Una de las mejores wikis técnicas en el mundo Linux</li>
       <li><a href="https://wiki.gentoo.org/wiki/Handbook:Main_Page" target="_blank">📗 Gentoo Handbook</a> – La guía oficial de instalación y mantenimiento de Gentoo</li>
       <li><a href="https://man.openbsd.org/" target="_blank">📙 OpenBSD man pages</a> – Documentación técnica oficial del sistema</li>
-      <li><a href="https://github.com/MTJailed/C-Programming-Books" target="_blank">📕 Libros sobre C (GitHub)</a> – Colección curada de recursos para aprender C</li>
+      <a href="https://github.com/MTJailed/C-Programming-Books" target="_blank">📕 Libros sobre C (GitHub)</a> – Colección curada de recursos para aprender C
     </ul>
   </article>
 </section>
@@ -153,7 +153,7 @@
       <h2>Contacto</h2>
       <p>¿Tienes preguntas sobre Linux, programación de bajo nivel o quieres compartir algún proyecto? ¡Escríbeme!</p>
       
-      <form id="formulario-contacto">
+      <form id="formulario-contacto" onsubmit="cerrarFormulario(event)">
         <div class="form-group">
           <label for="nombre">Nombre:</label>
           <input type="text" id="nombre" name="nombre" required>
@@ -187,9 +187,21 @@
       </form>
     </article>
   </section>
+
   <footer>
     <p>Desarrollado con ❤️ por un apasionado de las interacciones software/hardware</p>
   </footer>
+
+  <script>
+    function cerrarFormulario(event) {
+      event.preventDefault();  // Previene la acción predeterminada del formulario (recargar página)
+
+      // Muestra un mensaje de éxito (opcional)
+      alert("¡Formulario enviado con éxito!");
+
+      // Redirige al usuario a la página principal después de enviar
+      window.location.href = "index.html";  // Cambia "index.html" por la URL de tu página de inicio
+    }
+  </script>
 </body>
 </html>
-
