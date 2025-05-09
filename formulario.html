@@ -31,40 +31,57 @@
       </div>
 
       <div class="mb-3">
-  <label class="form-label">Lenguaje de programación favorito</label><br>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="lenguaje" id="c" value="C" required>
-    <label class="form-check-label" for="c">C</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="lenguaje" id="cpp" value="C++">
-    <label class="form-check-label" for="cpp">C++</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="lenguaje" id="python" value="Python">
-    <label class="form-check-label" for="python">Python</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="lenguaje" id="rust" value="Rust">
-    <label class="form-check-label" for="rust">Rust</label>
-  </div>
-  <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="lenguaje" id="swift" value="Swift">
-    <label class="form-check-label" for="swift">Swift</label>
-  </div>
-  <div class="invalid-feedback d-block">Selecciona al menos uno.</div>
-</div>
+        <label class="form-label">Lenguaje de programación favorito</label><br>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="lenguaje" id="c" value="C" required>
+          <label class="form-check-label" for="c">C</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="lenguaje" id="cpp" value="C++">
+          <label class="form-check-label" for="cpp">C++</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="lenguaje" id="python" value="Python">
+          <label class="form-check-label" for="python">Python</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="lenguaje" id="rust" value="Rust">
+          <label class="form-check-label" for="rust">Rust</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="lenguaje" id="swift" value="Swift">
+          <label class="form-check-label" for="swift">Swift</label>
+        </div>
+        <div class="invalid-feedback d-block">Selecciona al menos uno.</div>
+      </div>
 
       <div class="mb-3">
-  <label for="intereses" class="form-label">Intereses</label>
-  <select class="form-select" id="intereses" multiple required size="4">
-    <option value="linux">Linux</option>
-    <option value="software">Software Libre</option>
-    <option value="programacion">Programación de sistemas</option>
-    <option value="arquitecturas">Arquitecturas de procesadores</option>
-  </select>
-  <div class="invalid-feedback">Selecciona al menos un tema de interés.</div>
-</div>
+        <label class="form-label">Intereses</label><br>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="intereses" id="linux" value="linux">
+          <label class="form-check-label" for="linux">Linux</label>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="intereses" id="software" value="software">
+          <label class="form-check-label" for="software">Software Libre</label>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="intereses" id="programacion" value="programacion">
+          <label class="form-check-label" for="programacion">Programación de sistemas</label>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="intereses" id="arquitecturas" value="arquitecturas">
+          <label class="form-check-label" for="arquitecturas">Arquitecturas de procesadores</label>
+        </div>
+
+        <div id="intereses-feedback" class="invalid-feedback d-block" style="display: none;">
+          Selecciona al menos un tema de interés.
+        </div>
+      </div>
 
       <div class="mb-3 form-check">
         <input type="checkbox" class="form-check-input" id="check" required>
@@ -77,26 +94,31 @@
   </div>
 
   <script>
-  (() => {
-    'use strict';
-    const forms = document.querySelectorAll('.needs-validation');
+    (() => {
+      'use strict';
+      const forms = document.querySelectorAll('.needs-validation');
 
-    Array.from(forms).forEach(form => {
-      const submitButton = form.querySelector('button[type="submit"]');
+      Array.from(forms).forEach(form => {
+        const submitButton = form.querySelector('button[type="submit"]');
 
-      form.addEventListener('submit', event => {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        } else {
-          submitButton.disabled = true;
-        }
+        form.addEventListener('submit', event => {
+          const checkboxes = form.querySelectorAll('input[name="intereses"]');
+          const checked = Array.from(checkboxes).some(cb => cb.checked);
+          const feedback = form.querySelector('#intereses-feedback');
 
-        form.classList.add('was-validated');
-      }, false);
-    });
-  })();
-</script>
+          if (!form.checkValidity() || !checked) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!checked) feedback.style.display = 'block';
+          } else {
+            feedback.style.display = 'none';
+            submitButton.disabled = true;
+          }
+
+          form.classList.add('was-validated');
+        }, false);
+      });
+    })();
+  </script>
 </body>
 </html>
-
