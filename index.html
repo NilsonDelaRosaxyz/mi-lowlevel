@@ -1,207 +1,1103 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Low-Level y Linux</title>
-  <link rel="stylesheet" href="styles.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Bits, bytes y libertad - Blog de Linux y Low-Level</title>
+    <meta name="description" content="Aventuras en el mundo del FOSS, sistemas operativos minimalistas y programación de bajo nivel">
+    <meta name="keywords" content="Linux, FOSS, programming, low-level, systems, void linux, openbsd">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <style>
+        :root {
+            --primary-color: #00ffcc;
+            --secondary-color: #ff6b6b;
+            --accent-color: #4ecdc4;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #1a1a1a;
+            --bg-lighter: #2a2a2a;
+            --text-light: #f0f0f0;
+            --text-muted: #b0b0b0;
+            --border-color: #333;
+            --shadow-primary: 0 0 20px rgba(0, 255, 204, 0.1);
+            --shadow-hover: 0 0 30px rgba(0, 255, 204, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header y Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            transition: 0.3s;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 50%, var(--bg-dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 204, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-10px, -10px) rotate(1deg); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            animation: slideUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: var(--bg-dark);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            animation: slideUp 1s ease-out 1s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 255, 204, 0.3);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: var(--bg-darker);
+            border-radius: 15px;
+            box-shadow: var(--shadow-primary);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        /* Blog Posts Grid */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .blog-post {
+            background: var(--bg-lighter);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .blog-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 204, 0.15);
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .post-tag {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Tools Section */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .tool-card {
+            background: var(--bg-lighter);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .tool-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 255, 204, 0.15);
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-lighter);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 204, 0.05);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-color);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--bg-lighter);
+            border-radius: 10px;
+            width: 45%;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 55%;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 15px;
+            height: 15px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            transform: translateY(-50%);
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -23px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -23px;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            background: var(--bg-lighter);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: var(--bg-dark);
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-darker);
+            padding: 3rem 2rem 1rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-link {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            border-radius: 50%;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: var(--bg-darker);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .nav-menu.active {
+                transform: translateX(0);
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                width: calc(100% - 40px);
+                left: 40px !important;
+            }
+
+            .timeline-item::before {
+                left: -28px !important;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .section {
+                margin: 2rem 0;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        /* Loading Animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Code Blocks */
+        pre, code {
+            background: var(--bg-dark);
+            color: var(--primary-color);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>🧠 Bits, bytes y libertad</h1>
-    <p>Mis aventuras en el mundo del FOSS y sistemas operativos minimalistas</p>
-  </header>
-  <nav>
-    <ul>
-      <li><a href="#sobre-mi">Sobre mí</a></li>
-      <li><a href="#historia">Mi historia</a></li>
-      <li><a href="#herramientas">Herramientas</a></li>
-      <li><a href="#comparacion">Comparación</a></li>
-      <li><a href="#multimedia">Multimedia</a></li>
-      <li><a href="#contacto">Contacto</a></li>
-      <li><a href="formulario.html">Formulario</a></li>  
-    </ul>
-  </nav>
-  <section id="sobre-mi">
-    <article>
-      <h2>Sobre mí</h2>
-      <p>Soy un entusiasta del software/hardware libre, los sistemas operativos Unix-like, y la programación de bajo nivel. Me gusta aprender cómo funcionan las cosas desde su código fuente, el desarrollo de arquitecturas de hardware, y configurar sistemas ligeros y minimalistas con distros como <strong>Void Linux</strong> y <strong>OpenBSD</strong>.</p>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux Tux" width="150" />
-    </article>
-  </section>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
 
-  <section id="historia">
-    <article>
-      <h2>Mi historia con Linux</h2>
-      <p>
-        Al igual que muchos otros, Windows fue mi zona de confort durante años. Se sentía estable, eficiente y bien incorporado... hasta que no.
-        Tras meses de consumo excesivo de RAM, las constantes actualizaciones forzadas y problemas de compatibilidad, me vi forzado a explorar nuevos sistemas operativos que cumplieran con lo que yo quería.
-      </p>
-      <p>
-        Así llegué a Fedora, que usé durante un corto periodo de tiempo. Ese fue el punto de no retorno: me abrió la puerta al mundo del software libre, del control total sobre mi sistema, y del amor por las distros minimalistas y los entornos personalizados. Desde entonces no ha habido vuelta atrás.
-      </p>
-    </article>
-  </section>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">
+                🧠 Bits, bytes y libertad
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                <li><a href="#sobre-mi" class="nav-link">Sobre mí</a></li>
+                <li><a href="#blog" class="nav-link">Blog</a></li>
+                <li><a href="#herramientas" class="nav-link">Herramientas</a></li>
+                <li><a href="#comparacion" class="nav-link">Comparación</a></li>
+                <li><a href="#recursos" class="nav-link">Recursos</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
 
-  <section id="herramientas">
-    <article>
-      <h2>Herramientas y tecnologías favoritas</h2>
-      <ul>
-        <li>🖥️ Lenguajes: C, Rust, Assembly</li>
-        <li>🐧 Distros: Void/Arch Linux, Gentoo, OpenBSD</li>
-        <li>🩰 Init: runit, OpenRC, sin systemd</li>
-        <li>🪟 Window managers: dwm, Hyprland</li>
-        <li>🧠 Debugging: GDB, strace, objdump</li>
-        <li>⚙️ Kernels personalizados y minimalismo</li>
-      </ul>
-    </article>
-  </section>
-
-  <section id="comparacion">
-  <article>
-    <h2>Comparación de sistemas</h2>
-    <table>
-      <tr>
-        <th>Sistema 🖥️</th>
-        <th>Init ⚙️</th>
-        <th>Facilidad 🧩</th>
-        <th>Uso 🚀</th>
-        <th>Filosofía / Ventaja 🧠</th>
-      </tr>
-      <tr>
-        <td>Void Linux</td>
-        <td>runit</td>
-        <td>Media</td>
-        <td>Diario</td>
-        <td>Minimalismo real, sin systemd</td>
-      </tr>
-      <tr>
-        <td>Gentoo</td>
-        <td>OpenRC</td>
-        <td>Baja</td>
-        <td>Experimental</td>
-        <td>Compilación total, control absoluto</td>
-      </tr>
-      <tr>
-        <td>OpenBSD</td>
-        <td>rc.d</td>
-        <td>Media</td>
-        <td>Seguridad / Aprendizaje</td>
-        <td>Enfoque en simplicidad y seguridad por defecto</td>
-      </tr>
-      <tr>
-        <td>Fedora</td>
-        <td>systemd</td>
-        <td>Alta</td>
-        <td>Inicio en Linux</td>
-        <td>Ambiente moderno, GNOME por defecto</td>
-      </tr>
-      <tr>
-        <td>Arch Linux</td>
-        <td>systemd</td>
-        <td>Media</td>
-        <td>Personalización total</td>
-        <td>Rolling release, filosofía KISS</td>
-      </tr>
-      <tr>
-        <td>Debian</td>
-        <td>systemd</td>
-        <td>Alta</td>
-        <td>Estable / Servidores</td>
-        <td>Robustez, estabilidad a largo plazo</td>
-      </tr>
-    </table>
-  </article>
-</section>
-
-  <section id="multimedia">
-    <article>
-      <h2>Multimedia recomendada</h2>
-      <p>Anexo video donde se explica la evolución de Unix y derivados desde sus inicios:</p>
-      <div class="video-container">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/tc4ROCJYbm0" title="The Evolution of Unix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-      <p>Explora más sobre sistemas Unix-like:</p>
-      <iframe width="400" height="250" src="https://es.wikipedia.org/wiki/Unix-like" title="Unix-like Wikipedia"></iframe>
-    </article>
-  </section>
-
-<section id="recursos">
-  <article>
-    <h2>Recursos recomendados</h2>
-    <ul>
-      <li><a href="https://wiki.archlinux.org/" target="_blank">📘 Arch Wiki</a> – Una de las mejores wikis técnicas en el mundo Linux</li>
-      <li><a href="https://wiki.gentoo.org/wiki/Handbook:Main_Page" target="_blank">📗 Gentoo Handbook</a> – La guía oficial de instalación y mantenimiento de Gentoo</li>
-      <li><a href="https://man.openbsd.org/" target="_blank">📙 OpenBSD man pages</a> – Documentación técnica oficial del sistema</li>
-      <a href="https://github.com/MTJailed/C-Programming-Books" target="_blank">📕 Libros sobre C (GitHub)</a> – Colección curada de recursos para aprender C
-    </ul>
-  </article>
-</section>
-
-  <section id="riscv">
-  <article>
-    <h2>¿Interesado en el futuro de las arquitecturas ISA?</h2>
-    <p>RISC-V es una arquitectura de conjunto de instrucciones abierta que está cambiando el panorama del hardware. Es libre, modular y perfecta para quienes quieren entender cómo se construye un procesador desde cero.</p>
-    <a href="https://es.wikipedia.org/wiki/RISC-V" target="_blank">
-      <button>🧬 Inicia tu viaje con Hardware Libre</button>
-    </a>
-  </article>
-</section>
-  
-  <section id="contacto">
-    <article>
-      <h2>Contacto</h2>
-      <p>¿Tienes preguntas sobre Linux, programación de bajo nivel o quieres compartir algún proyecto? ¡Escríbeme!</p>
-      
-      <form id="formulario-contacto" onsubmit="cerrarFormulario(event)">
-        <div class="form-group">
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" required>
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <h1>🧠 Bits, bytes y libertad</h1>
+            <p>Mis aventuras en el mundo del FOSS, sistemas operativos minimalistas y programación de bajo nivel</p>
+            <a href="#sobre-mi" class="cta-button">Explorar mi viaje</a>
         </div>
-        
-        <div class="form-group">
-          <label for="email">Correo electrónico:</label>
-          <input type="email" id="email" name="email" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="asunto">Asunto:</label>
-          <select id="asunto" name="asunto">
-            <option value="consulta">Consulta técnica</option>
-            <option value="colaboracion">Propuesta de colaboración</option>
-            <option value="otro">Otro tema</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="mensaje">Mensaje:</label>
-          <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
-        </div>
-        
-        <div class="form-group">
-          <input type="checkbox" id="newsletter" name="newsletter">
-          <label for="newsletter">Quiero recibir actualizaciones sobre Linux y programación de bajo nivel</label>
-        </div>
-        
-        <button type="submit">Enviar mensaje</button>
-      </form>
-    </article>
-  </section>
+    </section>
 
-  <footer>
-    <p>Desarrollado con ❤️ por un apasionado de las interacciones software/hardware</p>
-  </footer>
+    <!-- Main Content -->
+    <main class="container">
+        <!-- About Section -->
+        <section class="section fade-in" id="sobre-mi">
+            <h2 class="section-title">Sobre mí</h2>
+            <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px;">
+                    <p>Soy un entusiasta del software/hardware libre, los sistemas operativos Unix-like, y la programación de bajo nivel. Me gusta aprender cómo funcionan las cosas desde su código fuente, el desarrollo de arquitecturas de hardware, y configurar sistemas ligeros y minimalistas con distros como <strong>Void Linux</strong> y <strong>OpenBSD</strong>.</p>
+                    <p>Mi filosofía se basa en el control total del sistema, la eficiencia y el minimalismo. Creo que entender cómo funciona el software a nivel de sistema te hace un mejor programador y usuario.</p>
+                </div>
+                <div style="text-align: center;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux Tux" width="150" style="filter: drop-shadow(0 0 10px rgba(0, 255, 204, 0.3));">
+                </div>
+            </div>
+        </section>
 
-  <script>
-    function cerrarFormulario(event) {
-      event.preventDefault();  // Previene la acción predeterminada del formulario (recargar página)
+        <!-- Blog Posts Section -->
+        <section class="section fade-in" id="blog">
+            <h2 class="section-title">Últimas publicaciones</h2>
+            <div class="blog-grid">
+                <article class="blog-post">
+                    <div class="post-meta">
+                        <span class="post-tag">Linux</span>
+                        <span>📅 Hace 1 semana</span>
+                    </div>
+                    <h3>Mi historia con Linux: Del caos de Windows a la libertad</h3>
+                    <p>Al igual que muchos otros, Windows fue mi zona de confort durante años. Se sentía estable, eficiente y bien incorporado... hasta que no. Tras meses de consumo excesivo de RAM, las constantes actualizaciones forzadas y problemas de compatibilidad, me vi forzado a explorar nuevos sistemas operativos.</p>
+                    <p>Así llegué a Fedora, que usé durante un corto periodo de tiempo. Ese fue el punto de no retorno: me abrió la puerta al mundo del software libre, del control total sobre mi sistema, y del amor por las distros minimalistas.</p>
+                </article>
+                
+                <article class="blog-post">
+                    <div class="post-meta">
+                        <span class="post-tag">Tutorial</span>
+                        <span>📅 Hace 3 días</span>
+                    </div>
+                    <h3>Configurando dwm: El window manager perfecto</h3>
+                    <p>dwm (dynamic window manager) es un window manager tiling extremadamente ligero y eficiente. En este post te explico cómo configurarlo desde cero para crear un entorno de trabajo minimalista y productivo.</p>
+                    <pre><code>git clone https://git.suckless.org/dwm
+cd dwm
+sudo make clean install</code></pre>
+                </article>
+                
+                <article class="blog-post">
+                    <div class="post-meta">
+                        <span class="post-tag">Hardware</span>
+                        <span>📅 Hace 5 días</span>
+                    </div>
+                    <h3>RISC-V: El futuro del hardware libre</h3>
+                    <p>RISC-V es una arquitectura de conjunto de instrucciones abierta que está cambiando el panorama del hardware. Es libre, modular y perfecta para quienes quieren entender cómo se construye un procesador desde cero.</p>
+                    <a href="https://es.wikipedia.org/wiki/RISC-V" target="_blank" style="color: var(--primary-color);">🧬 Más sobre RISC-V</a>
+                </article>
+            </div>
+        </section>
 
-      // Muestra un mensaje de éxito (opcional)
-      alert("¡Formulario enviado con éxito!");
+        <!-- Tools Section -->
+        <section class="section fade-in" id="herramientas">
+            <h2 class="section-title">Herramientas y tecnologías favoritas</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">💻</div>
+                    <h3>Lenguajes</h3>
+                    <p>C, Rust, Assembly</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🐧</div>
+                    <h3>Distros</h3>
+                    <p>Void/Arch Linux, Gentoo, OpenBSD</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">⚙️</div>
+                    <h3>Init Systems</h3>
+                    <p>runit, OpenRC, sin systemd</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🪟</div>
+                    <h3>Window Managers</h3>
+                    <p>dwm, Hyprland</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🔧</div>
+                    <h3>Debugging</h3>
+                    <p>GDB, strace, objdump</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🧠</div>
+                    <h3>Filosofía</h3>
+                    <p>Kernels personalizados y minimalismo</p>
+                </div>
+            </div>
+        </section>
 
-      // Redirige al usuario a la página principal después de enviar
-      window.location.href = "index.html";  // Cambia "index.html" por la URL de tu página de inicio
-    }
-  </script>
+        <!-- Timeline Section -->
+        <section class="section fade-in" id="historia">
+            <h2 class="section-title">Mi viaje por el mundo Unix</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>🪟 Era Windows</h3>
+                    <p>Años de zona de confort, hasta que los problemas de rendimiento y las actualizaciones forzadas me llevaron a buscar alternativas.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>🔴 Fedora: El despertar</h3>
+                    <p>Mi primera distro Linux. Aquí descubrí la libertad del software libre y el control total sobre mi sistema.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>🎯 Arch Linux: Personalización total</h3>
+                    <p>El salto a Arch me enseñó sobre la filosofía KISS y rolling releases. Aquí aprendí a compilar kernels.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>🌿 Void Linux: Minimalismo real</h3>
+                    <p>Void me mostró un mundo sin systemd, con runit como init. Rapidez y simplicidad en estado puro.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>🛡️ OpenBSD: Seguridad por diseño</h3>
+                    <p>Mi incursión en los BSD. Aquí aprendí sobre seguridad real y código limpio.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Table -->
+        <section class="section fade-in" id="comparacion">
+            <h2 class="section-title">Comparación de sistemas</h2>
+            <div class="comparison-table">
+                <table>
+                    <tr>
+                        <th>Sistema 🖥️</th>
+                        <th>Init ⚙️</th>
+                        <th>Facilidad 🧩</th>
+                        <th>Uso 🚀</th>
+                        <th>Filosofía / Ventaja 🧠</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Void Linux</strong></td>
+                        <td>runit</td>
+                        <td>Media</td>
+                        <td>Diario</td>
+                        <td>Minimalismo real, sin systemd</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gentoo</strong></td>
+                        <td>OpenRC</td>
+                        <td>Baja</td>
+                        <td>Experimental</td>
+                        <td>Compilación total, control absoluto</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenBSD</strong></td>
+                        <td>rc.d</td>
+                        <td>Media</td>
+                        <td>Seguridad / Aprendizaje</td>
+                        <td>Enfoque en simplicidad y seguridad por defecto</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arch Linux</strong></td>
+                        <td>systemd</td>
+                        <td>Media</td>
+                        <td>Personalización total</td>
+                        <td>Rolling release, filosofía KISS</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fedora</strong></td>
+                        <td>systemd</td>
+                        <td>Alta</td>
+                        <td>Inicio en Linux</td>
+                        <td>Ambiente moderno, GNOME por defecto</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section class="section fade-in" id="recursos">
+            <h2 class="section-title">Recursos recomendados</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div>
+                    <h3>📚 Documentación esencial</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <a href="https://wiki.archlinux.org/" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">📘 Arch Wiki</a>
+                            <p style="margin: 0.5rem 0; color: var(--text-muted);">Una de las mejores wikis técnicas en el mundo Linux</p>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <a href="https://wiki.gentoo.org/wiki/Handbook:Main_Page" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">📗 Gentoo Handbook</a>
+                            <p style="margin: 0.5rem 0; color: var(--text-muted);">Guía oficial de instalación y mantenimiento de Gentoo</p>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <a href="https://man.openbsd.org/" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">📙 OpenBSD man pages</a>
+                            <p style="margin: 0.5rem 0; color: var(--text-muted);">Documentación técnica oficial del sistema</p>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>💾 Programación de sistemas</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <a href="https://github.com/MTJailed/C-Programming-Books" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">📕 Libros sobre C</a>
+                            <p style="margin: 0.5rem 0; color: var(--text-muted);">Colección curada de recursos para aprender C</p>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <a href="https://www.kernel.org/doc/html/latest/" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">🐧 Linux Kernel Documentation</a>
+                            <p style="margin: 0.5rem 0; color: var(--text-muted);">Documentación oficial del kernel de Linux</p>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <a href="https://doc.rust-lang.org/book/" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">🦀 The Rust Book</a>
+                            <p style="margin: 0.5rem 0; color: var(--text-muted);">Aprende Rust desde cero</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Multimedia Section -->
+            <div style="margin-top: 3rem;">
+                <h3>🎥 Multimedia recomendada</h3>
+                <p>Video sobre la evolución de Unix y derivados desde sus inicios:</p>
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 1rem 0; border-radius: 12px; box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/tc4ROCJYbm0" title="The Evolution of Unix" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px;"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="section fade-in" id="contacto">
+            <h2 class="section-title">Contacto</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+                <div>
+                    <h3>¡Conectemos!</h3>
+                    <p>¿Tienes preguntas sobre Linux, programación de bajo nivel o quieres compartir algún proyecto? ¡Escríbeme!</p>
+                    <p>Me encanta hablar sobre:</p>
+                    <ul style="color: var(--text-muted);">
+                        <li>🐧 Configuraciones de Linux</li>
+                        <li>⚙️ Optimización de sistemas</li>
+                        <li>💻 Programación en C/Rust</li>
+                        <li>🔧 Hardware libre y RISC-V</li>
+                        <li>🛡️ Seguridad en sistemas Unix</li>
+                    </ul>
+                </div>
+                
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Correo electrónico:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Asunto:</label>
+                        <select id="subject" name="subject">
+                            <option value="consulta">Consulta técnica</option>
+                            <option value="colaboracion">Propuesta de colaboración</option>
+                            <option value="linux">Ayuda con Linux</option>
+                            <option value="programming">Programación de sistemas</option>
+                            <option value="otro">Otro tema</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Mensaje:</label>
+                        <textarea id="message" name="message" rows="5" required placeholder="Cuéntame sobre tu proyecto o pregunta..."></textarea>
+                    </div>
+                    
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="newsletter" name="newsletter" style="width: auto;">
+                        <label for="newsletter" style="margin: 0; font-weight: normal;">Quiero recibir actualizaciones sobre Linux y programación de bajo nivel</label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Enviar mensaje 🚀</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#" class="social-link" title="GitHub">GH</a>
+                <a href="#" class="social-link" title="LinkedIn">LI</a>
+                <a href="#" class="social-link" title="Twitter">TW</a>
+                <a href="#" class="social-link" title="Email">@</a>
+            </div>
+            <p>Desarrollado con ❤️ por un apasionado de las interacciones software/hardware</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">
+                © 2025 Bits, bytes y libertad. Compartiendo conocimiento libre desde el código fuente.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            const loading = document.getElementById('loading');
+            loading.classList.add('hidden');
+            setTimeout(() => loading.remove(), 500);
+        });
+
+        // Mobile Navigation
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const targetPosition = target.offsetTop - headerHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Header Background on Scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(10, 10, 10, 0.98)';
+                header.style.backdropFilter = 'blur(15px)';
+            } else {
+                header.style.background = 'rgba(10, 10, 10, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            }
+        });
+
+        // Contact Form Handler
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const subject = formData.get('subject');
+            const message = formData.get('message');
+            
+            // Simulate form submission
+            const submitBtn = this.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Enviando...';
+            submitBtn.disabled = true;
+            
+            // Simulate network delay
+            setTimeout(() => {
+                // Show success message
+                alert(`¡Gracias ${name}! Tu mensaje ha sido enviado correctamente. Te responderé pronto a ${email}.`);
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Dynamic typing effect for hero subtitle
+        const subtitle = document.querySelector('.hero p');
+        const text = subtitle.textContent;
+        subtitle.textContent = '';
+        
+        let i = 0;
+        const typeWriter = () => {
+            if (i < text.length) {
+                subtitle.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        };
+        
+        // Start typing effect after page load
+        setTimeout(typeWriter, 1000);
+
+        // Easter egg: Konami code
+        let konamiCode = [];
+        const correctCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
+        
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > correctCode.length) {
+                konamiCode.shift();
+            }
+            
+            if (konamiCode.length === correctCode.length && 
+                konamiCode.every((code, index) => code === correctCode[index])) {
+                // Easter egg triggered
+                document.body.style.filter = 'hue-rotate(180deg)';
+                alert('🎉 ¡Has encontrado el easter egg! Modo hacker activado 🐧');
+                setTimeout(() => {
+                    document.body.style.filter = 'none';
+                }, 5000);
+                konamiCode = [];
+            }
+        });
+
+        // Random tech facts
+        const techFacts = [
+            "¿Sabías que Linux fue creado por Linus Torvalds cuando tenía solo 21 años?",
+            "El kernel de Linux tiene más de 28 millones de líneas de código.",
+            "BSD es más antiguo que Linux - nació en 1977.",
+            "El primer compilador de C fue escrito en ensamblador.",
+            "RISC-V es completamente open source, incluyendo las especificaciones.",
+            "Void Linux no usa systemd y es una de las distros más rápidas."
+        ];
+
+        // Show random fact every 30 seconds
+        setInterval(() => {
+            if (Math.random() < 0.1) { // 10% chance every 30 seconds
+                const randomFact = techFacts[Math.floor(Math.random() * techFacts.length)];
+                console.log(`💡 ${randomFact}`);
+            }
+        }, 30000);
+
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    console.log(`⚡ Página cargada en ${perfData.loadEventEnd - perfData.fetchStart}ms`);
+                }, 0);
+            });
+        }
+    </script>
 </body>
 </html>
